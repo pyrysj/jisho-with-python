@@ -2,6 +2,10 @@ import csv
 from IPython.display import display
 import os
 import pandas as pd
+from datetime import datetime
+
+# checking execution of program
+t1 = datetime.now()
 
 # load the desired words, this can probably be done in an interactive way at some point.
 # keywords = pd.read_csv("word_list.csv")
@@ -26,8 +30,20 @@ for file in os.listdir(folder_name):
         data = pd.read_json(folder_name+file)
         dfs.append(data)
 
-# we do this for performance reasons 
+# we do the actual creation of the full dictionary outsoide of the loop for performance reasons 
 dictionary = pd.concat(dfs, ignore_index=True)
-# filtered = dictionary[dictionary[0].isin(keywords)]
 filtered = dictionary.query("@dictionary[0] in @keywords")
-display(filtered)   
+# sort the words based off the words, tiebreak with readings, select the column containing the definitions
+merged_words = filtered.groupby([0,1],as_index=False)[5].apply(list)
+# for generating the cards - store the card type
+# some efficiency savings could be done here ofr sure 
+verb_type = filtered.groupby([0,1],as_index=False)[3].apply(list)
+word_type = filtered.groupby([0,1],as_index=False)[4].apply(list)
+
+# save the resulting dataframe as a .csv file. We are doing this to have a better time understanding what 
+# exactly happens.
+
+word_type.to_csv('result.csv',encoding='utf-8-sig')
+t2 = datetime.now()
+# checking execution time of code, seems relatively feasible but there might be room for improvement. 
+print(f"{t2-t1}s to exectue code") 
