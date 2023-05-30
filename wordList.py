@@ -25,9 +25,9 @@ def pickWords(keywords: list, dictionary:pd.DataFrame):
 
 # assuming fixed format here as well
 # can (probably) be rewritten to work in more general cases.
-def mergeTerms(data:pd.DataFrame, idx:int):
-    merged = data.groupby([0,1],as_index=False)[idx].apply(list)
+def mergeTerms(df:pd.DataFrame, idx:int):
+    merged = df.groupby([0,1],as_index=False)[idx].apply(list)
     return merged
 
-def generateFile():
-    pass 
+def generateFile(df:pd.DataFrame):
+    df.to_csv('result.csv',encoding='utf-8-sig')
