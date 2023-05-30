@@ -3,6 +3,7 @@ from IPython.display import display
 import os
 import pandas as pd
 from datetime import datetime
+import wordList
 
 # checking execution of program
 t1 = datetime.now()
@@ -20,25 +21,16 @@ with open('word_list.csv', newline='') as f:
 keywords = [item for sublist in data for item in sublist]
 
 # basic implementation with pandas
-# we are using a set location, with a fixed dictionary provided 
-# not included in the actual repository due to potential copyright concerns. 
-# we define a string here for the folder name, allows for more flexible inmplementation eventually
+# we define a string here for the folder name
 folder_name = "jmdict_english/"
-dfs = []
-for file in os.listdir(folder_name):
-    if file.startswith("term_bank"):
-        data = pd.read_json(folder_name+file)
-        dfs.append(data)
+# pass it to the function, returns a dict
+dictionary = wordList.readDict(folder_name)
 
-# we do the actual creation of the full dictionary outsoide of the loop for performance reasons 
-dictionary = pd.concat(dfs, ignore_index=True)
-filtered = dictionary.query("@dictionary[0] in @keywords")
+filtered = wordList.pickWords(keywords,dictionary)
 # sort the words based off the words, tiebreak with readings, select the column containing the definitions
-merged_words = filtered.groupby([0,1],as_index=False)[5].apply(list)
-# for generating the cards - store the card type
-# some efficiency savings could be done here ofr sure 
-verb_type = filtered.groupby([0,1],as_index=False)[3].apply(list)
-word_type = filtered.groupby([0,1],as_index=False)[4].apply(list)
+merged_words = wordList.mergeTerms(filtered, 5)
+verb_type = wordList.mergeTerms(filtered, 3)
+word_type = wordList.mergeTerms(filtered, 4)
 
 # save the resulting dataframe as a .csv file. We are doing this to have a better time understanding what 
 # exactly happens.
