@@ -5,6 +5,9 @@ import pandas as pd
 from datetime import datetime
 import wordList
 
+# split the main file into two parts (to ease testing of the latter part)
+
+
 # checking execution of program
 t1 = datetime.now()
 
@@ -29,13 +32,14 @@ dictionary = wordList.readDict(folder_name)
 filtered = wordList.pickWords(keywords,dictionary)
 # sort the words based off the words, tiebreak with readings, select the column containing the definitions
 merged_words = wordList.mergeTerms(filtered, 5)
-verb_type = wordList.mergeTerms(filtered, 3)
-word_type = wordList.mergeTerms(filtered, 4)
+wordList.generateFile(merged_words)
+
+# simplifying code by not using this data
+#verb_type = wordList.mergeTerms(filtered, 3)
+#word_type = wordList.mergeTerms(filtered, 4)
 
 # save the resulting dataframe as a .csv file. We are doing this to have a better time understanding what 
 # exactly happens.
-
-word_type.to_csv('result.csv',encoding='utf-8-sig')
 t2 = datetime.now()
 # checking execution time of code, seems relatively feasible but there might be room for improvement. 
 print(f"{t2-t1}s to exectue code") 
