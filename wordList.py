@@ -30,4 +30,5 @@ def mergeTerms(df:pd.DataFrame, idx:int):
     return merged
 
 def generateFile(df:pd.DataFrame):
-    df.to_csv('result.csv',encoding='utf-8-sig')
+    # no index, or column names, also remove the '', also separator as tab char
+    df.to_csv('result.tsv',encoding='utf-8-sig',header=False,index=False,sep='\t')
